@@ -8,6 +8,7 @@ import (
 	"go-rest-api/router"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/handlers"
 )
@@ -18,9 +19,23 @@ func main() {
 	config.DB.AutoMigrate(&models.User{})
 	r := router.NewRouter()
 	fmt.Println("Server is running on http://localhost:8080")
-	log.Fatal(http.ListenAndServe(":8080",
-		handlers.CORS(
-			handlers.AllowedOrigins([]string{"http://localhost:3000"}),
-			handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE"}),
-			handlers.AllowedHeaders([]string{"Content-Type"}))(r)))
+	// Get port from environment (Render injects it)
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080" // fallback for local dev
+	}
+
+	// CORS settings — allow your deployed frontend domain too
+	corsHandler := handlers.CORS(
+		handlers.AllowedOrigins([]string{
+			"http://localhost:3000",                    // for local dev
+			"https://frontend-eta-beryl-37.vercel.app", // replace with your actual Vercel URL
+		}),
+		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE"}),
+		handlers.AllowedHeaders([]string{"Content-Type"}),
+	)(r)
+
+	// Start server
+	fmt.Println("Server is running on port:", port)
+	log.Fatal(http.ListenAndServe(":"+port, corsHandler))
 }
