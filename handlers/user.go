@@ -22,7 +22,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	config.DB.First(&user, params["id"])
 	json.NewEncoder(w).Encode(user)
 
-	http.Error(w, "User not found", http.StatusNotFound)
+	//http.Error(w, "User not found", http.StatusNotFound)
 }
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
