@@ -40,9 +40,12 @@ func main() {
 		allowedOrigins = append(allowedOrigins, origin)
 	}
 
-	// CORS settings — allow your deployed frontend domain too
+	// CORS settings — allow your frontend (local + vercel)
 	corsHandler := handlers.CORS(
-		handlers.AllowedOrigins(allowedOrigins),
+		handlers.AllowedOrigins([]string{
+			"http://localhost:3000",
+			"https://frontend-eta-beryl-37.vercel.app",
+		}),
 		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
 		handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}),
 	)(r)
