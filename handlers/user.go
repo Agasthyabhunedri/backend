@@ -19,7 +19,7 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 func GetUser(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	var user models.User
-	config.DB.First(&user, params["name"])
+	config.DB.First(&user, params["id"])
 	json.NewEncoder(w).Encode(user)
 
 	http.Error(w, "User not found", http.StatusNotFound)
