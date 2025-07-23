@@ -10,27 +10,39 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/joho/godotenv"
+
 	"github.com/gorilla/handlers"
 )
 
 func main() {
+
+	// ✅ Load environment variables from .env file (in dev only)
+	_ = godotenv.Load()
+
 	config.ConnectDatabase()
 	// Migrate the schema
 	config.DB.AutoMigrate(&models.User{})
 	r := router.NewRouter()
-	fmt.Println("Server is running on http://localhost:8080")
+
 	// Get port from environment (Render injects it)
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080" // fallback for local dev
 	}
 
+	// ✅ Load CORS origins from env
+	allowedOrigins := []string{}
+	if origin := os.Getenv("CORS_ORIGIN_LOCAL"); origin != "" {
+		allowedOrigins = append(allowedOrigins, origin)
+	}
+	if origin := os.Getenv("CORS_ORIGIN_PROD"); origin != "" {
+		allowedOrigins = append(allowedOrigins, origin)
+	}
+
 	// CORS settings — allow your deployed frontend domain too
 	corsHandler := handlers.CORS(
-		handlers.AllowedOrigins([]string{
-			"http://localhost:3000",                    // for local dev
-			"https://frontend-eta-beryl-37.vercel.app", // replace with your actual Vercel URL
-		}),
+		handlers.AllowedOrigins(allowedOrigins),
 		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE"}),
 		handlers.AllowedHeaders([]string{"Content-Type"}),
 	)(r)
