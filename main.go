@@ -43,8 +43,8 @@ func main() {
 	// CORS settings — allow your deployed frontend domain too
 	corsHandler := handlers.CORS(
 		handlers.AllowedOrigins(allowedOrigins),
-		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE"}),
-		handlers.AllowedHeaders([]string{"Content-Type"}),
+		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
+		handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}),
 	)(r)
 
 	// Start server
